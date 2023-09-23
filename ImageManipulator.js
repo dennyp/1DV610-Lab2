@@ -75,6 +75,19 @@ class ImageManipulator {
 
     this.putManipulatedImageIntoContext()
   }
+
+  applyBrightness(factor) {
+    const rgbaData = this.getRgbaData()
+
+    const numberOfValuesInPixel = 4
+    for (let i = 0; i < rgbaData.length; i += numberOfValuesInPixel) {
+      rgbaData[i] *= factor
+      rgbaData[i + 1] *= factor
+      rgbaData[i + 2] *= factor
+    }
+
+    this.putManipulatedImageIntoContext()
+  }
 }
 
 export default ImageManipulator
