@@ -62,6 +62,19 @@ class ImageManipulator {
 
     this.putManipulatedImageIntoContext()
   }
+
+  applyFilterNegative() {
+    const rgbaData = this.getRgbaData()
+
+    const numberOfValuesInPixel = 4
+    for (let i = 0; i < rgbaData.length; i += numberOfValuesInPixel) {
+      rgbaData[i] = 255 - rgbaData[i]
+      rgbaData[i + 1] = 255 - rgbaData[i + 1]
+      rgbaData[i + 2] = 255 - rgbaData[i + 2]
+    }
+
+    this.putManipulatedImageIntoContext()
+  }
 }
 
 export default ImageManipulator

@@ -9,3 +9,8 @@ const grayscaleButton = document.getElementById('btn-grayscale')
 grayscaleButton.addEventListener('click', () => {
   imageManipulator.applyFilterGrayscale()
 })
+
+const negativeButton = document.getElementById('btn-negative')
+negativeButton.addEventListener('click', () => {
+  imageManipulator.applyFilterNegative()
+})
