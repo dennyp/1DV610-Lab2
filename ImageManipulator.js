@@ -88,6 +88,17 @@ class ImageManipulator {
 
     this.putManipulatedImageIntoContext()
   }
+
+  applyOpacity(opacity) {
+    const rgbaData = this.getRgbaData()
+
+    const numberOfValuesInPixel = 4
+    for (let i = 0; i < rgbaData.length; i += numberOfValuesInPixel) {
+      rgbaData[i + 3] = opacity
+    }
+
+    this.putManipulatedImageIntoContext()
+  }
 }
 
 export default ImageManipulator

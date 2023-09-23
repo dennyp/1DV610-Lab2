@@ -31,3 +31,9 @@ const darkenButton = document.getElementById('btn-darken')
 darkenButton.addEventListener('click', () => {
   imageManipulator.applyBrightness(0.9)
 })
+
+const opacityButton = document.getElementById('btn-opacity')
+opacityButton.addEventListener('click', (e) => {
+  const opacity = e.target.value
+  imageManipulator.applyOpacity(opacity)
+})
