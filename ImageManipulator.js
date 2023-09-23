@@ -33,6 +33,12 @@ class ImageManipulator {
     this.context.putImageData(this.imageData, 0, 0)
   }
 
+  applyEffect(data, index, effect) {
+    data[index] = effect
+    data[index + 1] = effect
+    data[index + 2] = effect
+  }
+
   applyFilterGrayscale() {
     const rgbaData = this.getRgbaData()
 
@@ -51,9 +57,7 @@ class ImageManipulator {
         green * greenGrayscaleConstant +
         blue * blueGrayscaleConstant
 
-      rgbaData[i] = grayscale
-      rgbaData[i + 1] = grayscale
-      rgbaData[i + 2] = grayscale
+      this.applyEffect(rgbaData, i, grayscale)
     }
 
     this.putManipulatedImageIntoContext()
