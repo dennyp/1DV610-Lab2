@@ -1,15 +1,12 @@
 import ImageManipulator from './ImageManipulator.js'
 
 const canvas = document.getElementById('canvas')
-
-const imageManipulator = new ImageManipulator(canvas)
-
-const originalImage = 'wepik-export-20230922142657alsS.jpeg'
-imageManipulator.drawImageIntoContext(originalImage)
+const originalImageSrc = 'wepik-export-20230922142657alsS.jpeg'
+const imageManipulator = new ImageManipulator(canvas, originalImageSrc)
 
 const resetButton = document.getElementById('btn-reset')
 resetButton.addEventListener('click', () => {
-  imageManipulator.drawImageIntoContext(originalImage)
+  imageManipulator.drawImageIntoContext(originalImageSrc)
 })
 
 const grayscaleButton = document.getElementById('btn-grayscale')
@@ -36,4 +33,9 @@ const opacityButton = document.getElementById('btn-opacity')
 opacityButton.addEventListener('click', (e) => {
   const opacity = e.target.value
   imageManipulator.applyOpacity(opacity)
+})
+
+const rotateButton = document.getElementById('btn-rotate')
+rotateButton.addEventListener('click', () => {
+  imageManipulator.applyRotation(90)
 })

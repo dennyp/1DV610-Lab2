@@ -1,8 +1,15 @@
 class ImageManipulator {
-  constructor(canvas) {
+  constructor(canvas, imageSrc) {
     this.canvas = canvas
     this.context = canvas.getContext('2d')
+
     this.image = new Image()
+    this.drawImageIntoContext(imageSrc)
+
+    this.xImageCenter = this.image.width / 2
+    this.yImageCenter = this.image.height / 2
+    this.rotationAngle = 0
+    this.aspectRatio = this.image.width / this.image.height
   }
 
   setImageData() {
@@ -18,10 +25,14 @@ class ImageManipulator {
     return this.imageData.data
   }
 
+  setCanvasDimensions() {
+    this.canvas.width = this.image.width
+    this.canvas.height = this.image.height
+  }
+
   drawImageIntoContext(imageSrc) {
     this.image.onload = () => {
-      this.canvas.width = this.image.naturalWidth
-      this.canvas.height = this.image.naturalHeight
+      this.setCanvasDimensions()
       this.context.drawImage(this.image, 0, 0)
       this.setImageData()
     }
@@ -98,6 +109,53 @@ class ImageManipulator {
     }
 
     this.putManipulatedImageIntoContext()
+  }
+
+  setRotationAngle(degrees) {
+    if (this.rotationAngle >= 360) {
+      this.rotationAngle = degrees
+    } else {
+      this.rotationAngle += degrees
+    }
+  }
+
+  flipCanvasWidthAndHeight() {
+    this.canvas.width = this.image.height
+    this.canvas.height = this.image.width
+  }
+
+  updateCanvasDimensions(rotationInDegrees) {
+    if (rotationInDegrees === 90 || rotationInDegrees === 270) {
+      this.flipCanvasWidthAndHeight()
+    } else {
+      this.setCanvasDimensions()
+    }
+  }
+
+  clearCanvas() {
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
+  }
+
+  applyRotation(degrees) {
+    this.setRotationAngle(degrees)
+    this.updateCanvasDimensions(this.rotationAngle)
+    this.clearCanvas()
+
+    const rotationInRadians = (this.rotationAngle * Math.PI) / 180
+
+    this.context.save()
+    this.context.translate(this.canvas.width / 2, this.canvas.height / 2)
+    this.context.rotate(rotationInRadians)
+    this.context.drawImage(
+      this.image,
+      -this.xImageCenter,
+      -this.yImageCenter,
+      this.image.width,
+      this.image.height
+    )
+    this.context.restore()
+
+    this.setImageData()
   }
 }
 
