@@ -1,3 +1,7 @@
+/**
+ * Creates a new Image Manipulator.
+ * @class
+ */
 class ImageManipulator {
   #canvas
   #context
@@ -104,6 +108,12 @@ class ImageManipulator {
     )
   }
 
+  /**
+   * Represents the image manipulator.
+   * @constructor
+   * @param {HTMLElement} canvas - The canvas element to draw the image into.
+   * @param {String} imageSrc - The source destination of the image.
+   */
   constructor(canvas, imageSrc) {
     this.#setCanvas = canvas
     this.#setContext = canvas.getContext('2d')
@@ -116,11 +126,18 @@ class ImageManipulator {
     this.#setRotationAngle = 0
   }
 
+  /**
+   * Set canvas width and height to the image width and height
+   */
   #setOriginalCanvasDimensions() {
     this.#setCanvasWidth = this.#getImageWidth
     this.#setCanvasHeight = this.#getImageHeight
   }
 
+  /**
+   * When image is fully loaded, it will draw into the canvas context.
+   * @param {String} imageSrc - The source destination of the image.
+   */
   drawImageIntoContext(imageSrc) {
     this.#image.onload = () => {
       this.#setOriginalCanvasDimensions()
@@ -131,6 +148,9 @@ class ImageManipulator {
     this.#setImageSource = imageSrc
   }
 
+  /**
+   * Puts the manipulated image data into the canvas context.
+   */
   #putManipulatedImageIntoContext() {
     this.#getContext.putImageData(this.#getImageData, 0, 0)
   }
@@ -141,6 +161,9 @@ class ImageManipulator {
     data[index + 2] = effect
   }
 
+  /**
+   * Applies a grayscale filter to the image.
+   */
   applyFilterGrayscale() {
     const rgbaData = this.#getRgbaData
 
@@ -165,6 +188,9 @@ class ImageManipulator {
     this.#putManipulatedImageIntoContext()
   }
 
+  /**
+   * Applies a negative filter to the image. Applying the negative filter again will restore the image.
+   */
   applyFilterNegative() {
     const rgbaData = this.#getRgbaData
 
@@ -178,7 +204,11 @@ class ImageManipulator {
     this.#putManipulatedImageIntoContext()
   }
 
-  applyBrightness(factor) {
+  /**
+   * Changes the brightness of the image.
+   * @param {Number} factor - A factor to multiply the brightness of the image. If above 1, the image will become brighter. If below 1, the image will become darker.
+   */
+  changeBrightness(factor) {
     const rgbaData = this.#getRgbaData
 
     const numberOfValuesInPixel = 4
@@ -191,7 +221,11 @@ class ImageManipulator {
     this.#putManipulatedImageIntoContext()
   }
 
-  applyOpacity(opacity) {
+  /**
+   * Changes the opacity of the image.
+   * @param {Number} opacity - A value between 0 and 255. A lower value is more transparent.
+   */
+  changeOpacity(opacity) {
     const rgbaData = this.#getRgbaData
 
     const numberOfValuesInPixel = 4
@@ -202,11 +236,18 @@ class ImageManipulator {
     this.#putManipulatedImageIntoContext()
   }
 
+  /**
+   * Flips the width and height of the canvas.
+   */
   #flipCanvasWidthAndHeight() {
     this.#setCanvasWidth = this.#getImageHeight
     this.#setCanvasHeight = this.#getImageWidth
   }
 
+  /**
+   * If the image is rotated (-)90 degrees or (-)270 degrees, the canvas dimensions will be flipped from the original image. Otherwise, it is set to the original dimensions.
+   * @param {Number} rotationInDegrees - The rotation of the image in degrees.
+   */
   #updateCanvasDimensions(rotationInDegrees) {
     if (
       Math.abs(rotationInDegrees) === 90 ||
@@ -218,6 +259,9 @@ class ImageManipulator {
     }
   }
 
+  /**
+   * Clears the canvas context.
+   */
   #clearCanvas() {
     this.#getContext.clearRect(
       0,
@@ -227,21 +271,16 @@ class ImageManipulator {
     )
   }
 
-  applyRotation(degrees) {
+  /**
+   * Rotates the image around its center.
+   * @param {Number} degrees - The rotation of the image in degrees.
+   */
+  changeRotation(degrees) {
     this.#setRotationAngle = degrees
     this.#updateCanvasDimensions(this.#getRotationAngle)
-    console.log(
-      '🚀 ~ file: ImageManipulator.js:233 ~ ImageManipulator ~ applyRotation ~ this.#getRotationAngle:',
-      this.#getRotationAngle
-    )
     this.#clearCanvas()
 
     const rotationInRadians = (this.#getRotationAngle * Math.PI) / 180
-    console.log(
-      '🚀 ~ file: ImageManipulator.js:236 ~ ImageManipulator ~ applyRotation ~ rotationInRadians:',
-      rotationInRadians
-    )
-
     this.#getContext.save()
     this.#getContext.translate(
       this.#getCanvasWidth / 2,
@@ -260,7 +299,14 @@ class ImageManipulator {
     this.#setImageData = this.#getImageDataFromContext
   }
 
-  tintSelectedColor(data, index, color, factor) {
+  /**
+   * Checks which of the colors to tint and multiplies the current color value with the factor.
+   * @param {ImageData} data - The data of the image.
+   * @param {Number} index - The index of the current pixel.
+   * @param {String} color - The color to tint the image. Can be 'red', 'green' or 'blue'.
+   * @param {Number} factor - The factor to multiply the current color value with.
+   */
+  #tintSelectedColor(data, index, color, factor) {
     switch (color) {
       case 'red':
         data[index] *= factor
@@ -274,12 +320,17 @@ class ImageManipulator {
     }
   }
 
+  /**
+   * Tints the image with the selected color.
+   * @param {String} color - The color to tint the image. Can be 'red', 'green' or 'blue'.
+   * @param {Number} factor - The factor to multiply the current color value with.
+   */
   changeTint(color, factor) {
     const rgbaData = this.#getRgbaData
 
     const numberOfValuesInPixel = 4
     for (let i = 0; i < rgbaData.length; i += numberOfValuesInPixel) {
-      this.tintSelectedColor(rgbaData, i, color, factor)
+      this.#tintSelectedColor(rgbaData, i, color, factor)
     }
 
     this.#putManipulatedImageIntoContext()
