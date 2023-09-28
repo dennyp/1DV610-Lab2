@@ -25,14 +25,14 @@ class ImageManipulator {
     return this.imageData.data
   }
 
-  setCanvasDimensions() {
+  setOriginalCanvasDimensions() {
     this.canvas.width = this.image.width
     this.canvas.height = this.image.height
   }
 
   drawImageIntoContext(imageSrc) {
     this.image.onload = () => {
-      this.setCanvasDimensions()
+      this.setOriginalCanvasDimensions()
       this.context.drawImage(this.image, 0, 0)
       this.setImageData()
     }
@@ -125,10 +125,13 @@ class ImageManipulator {
   }
 
   updateCanvasDimensions(rotationInDegrees) {
-    if (rotationInDegrees === 90 || rotationInDegrees === 270) {
+    if (
+      Math.abs(rotationInDegrees) === 90 ||
+      Math.abs(rotationInDegrees) === 270
+    ) {
       this.flipCanvasWidthAndHeight()
     } else {
-      this.setCanvasDimensions()
+      this.setOriginalCanvasDimensions()
     }
   }
 

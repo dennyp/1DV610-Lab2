@@ -35,7 +35,13 @@ opacityButton.addEventListener('click', (e) => {
   imageManipulator.applyOpacity(opacity)
 })
 
-const rotateButton = document.getElementById('btn-rotate')
-rotateButton.addEventListener('click', () => {
+const rotateClockwiseButton = document.getElementById('btn-rotate-clockwise')
+rotateClockwiseButton.addEventListener('click', () => {
   imageManipulator.applyRotation(90)
+})
+const rotateCounterClockwiseButton = document.getElementById(
+  'btn-rotate-counterclockwise'
+)
+rotateCounterClockwiseButton.addEventListener('click', () => {
+  imageManipulator.applyRotation(-90)
 })
