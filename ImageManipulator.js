@@ -1,57 +1,148 @@
 class ImageManipulator {
-  constructor(canvas, imageSrc) {
-    this.canvas = canvas
-    this.context = canvas.getContext('2d')
+  #canvas
+  #context
+  #image
+  #imageData
+  #xImageCenter = 0
+  #yImageCenter = 0
+  #rotationAngle = 0
 
-    this.image = new Image()
-    this.drawImageIntoContext(imageSrc)
-
-    this.xImageCenter = this.image.width / 2
-    this.yImageCenter = this.image.height / 2
-    this.rotationAngle = 0
-    this.aspectRatio = this.image.width / this.image.height
+  get #getCanvasWidth() {
+    return this.#canvas.width
   }
 
-  setImageData() {
-    this.imageData = this.context.getImageData(
+  get #getCanvasHeight() {
+    return this.#canvas.height
+  }
+
+  set #setCanvas(canvas) {
+    this.#canvas = canvas
+  }
+
+  set #setCanvasWidth(width) {
+    if (width > 0) this.#canvas.width = width
+  }
+
+  set #setCanvasHeight(height) {
+    if (height > 0) this.#canvas.height = height
+  }
+
+  get #getContext() {
+    return this.#context
+  }
+
+  set #setContext(context) {
+    this.#context = context
+  }
+
+  get #getImage() {
+    return this.#image
+  }
+
+  get #getImageWidth() {
+    return this.#image.width
+  }
+
+  get #getImageHeight() {
+    return this.#image.height
+  }
+
+  set #setImage(image) {
+    this.#image = image
+  }
+
+  set #setImageSource(src) {
+    this.#image.src = src
+  }
+
+  get #getImageData() {
+    return this.#imageData
+  }
+
+  set #setImageData(data) {
+    this.#imageData = data
+  }
+
+  get #getRotationAngle() {
+    return this.#rotationAngle
+  }
+
+  set #setRotationAngle(degrees) {
+    if (this.#rotationAngle >= 360 || this.#rotationAngle <= -360) {
+      this.#rotationAngle = degrees
+    } else {
+      this.#rotationAngle += degrees
+    }
+  }
+
+  get #getXImageCenter() {
+    return this.#xImageCenter
+  }
+
+  get #getYImageCenter() {
+    return this.#yImageCenter
+  }
+
+  set #setXImageCenter(value) {
+    if (this.#getImageWidth > 0) this.#xImageCenter = value
+  }
+
+  set #setYImageCenter(value) {
+    if (this.#getImageHeight > 0) this.#yImageCenter = value
+  }
+
+  get #getRgbaData() {
+    return this.#imageData.data
+  }
+
+  get #getImageDataFromContext() {
+    return this.#getContext.getImageData(
       0,
       0,
-      this.canvas.width,
-      this.canvas.height
+      this.#getCanvasWidth,
+      this.#getCanvasHeight
     )
   }
 
-  getRgbaData() {
-    return this.imageData.data
+  constructor(canvas, imageSrc) {
+    this.#setCanvas = canvas
+    this.#setContext = canvas.getContext('2d')
+
+    this.#setImage = new Image()
+    this.drawImageIntoContext(imageSrc)
+
+    this.#setXImageCenter = this.#getImageWidth / 2
+    this.#setYImageCenter = this.#getImageHeight / 2
+    this.#setRotationAngle = 0
   }
 
-  setOriginalCanvasDimensions() {
-    this.canvas.width = this.image.width
-    this.canvas.height = this.image.height
+  #setOriginalCanvasDimensions() {
+    this.#setCanvasWidth = this.#getImageWidth
+    this.#setCanvasHeight = this.#getImageHeight
   }
 
   drawImageIntoContext(imageSrc) {
-    this.image.onload = () => {
-      this.setOriginalCanvasDimensions()
-      this.context.drawImage(this.image, 0, 0)
-      this.setImageData()
+    this.#image.onload = () => {
+      this.#setOriginalCanvasDimensions()
+      this.#getContext.drawImage(this.#getImage, 0, 0)
+      this.#setImageData = this.#getImageDataFromContext
     }
 
-    this.image.src = imageSrc
+    this.#setImageSource = imageSrc
   }
 
-  putManipulatedImageIntoContext() {
-    this.context.putImageData(this.imageData, 0, 0)
+  #putManipulatedImageIntoContext() {
+    this.#getContext.putImageData(this.#getImageData, 0, 0)
   }
 
-  applyEffect(data, index, effect) {
+  #applyEffect(data, index, effect) {
     data[index] = effect
     data[index + 1] = effect
     data[index + 2] = effect
   }
 
   applyFilterGrayscale() {
-    const rgbaData = this.getRgbaData()
+    const rgbaData = this.#getRgbaData
 
     // source of formula: https://en.wikipedia.org/wiki/Grayscale#Luma_coding_in_video_systems
     const redGrayscaleConstant = 0.299
@@ -68,14 +159,14 @@ class ImageManipulator {
         green * greenGrayscaleConstant +
         blue * blueGrayscaleConstant
 
-      this.applyEffect(rgbaData, i, grayscale)
+      this.#applyEffect(rgbaData, i, grayscale)
     }
 
-    this.putManipulatedImageIntoContext()
+    this.#putManipulatedImageIntoContext()
   }
 
   applyFilterNegative() {
-    const rgbaData = this.getRgbaData()
+    const rgbaData = this.#getRgbaData
 
     const numberOfValuesInPixel = 4
     for (let i = 0; i < rgbaData.length; i += numberOfValuesInPixel) {
@@ -84,11 +175,11 @@ class ImageManipulator {
       rgbaData[i + 2] = 255 - rgbaData[i + 2]
     }
 
-    this.putManipulatedImageIntoContext()
+    this.#putManipulatedImageIntoContext()
   }
 
   applyBrightness(factor) {
-    const rgbaData = this.getRgbaData()
+    const rgbaData = this.#getRgbaData
 
     const numberOfValuesInPixel = 4
     for (let i = 0; i < rgbaData.length; i += numberOfValuesInPixel) {
@@ -97,68 +188,76 @@ class ImageManipulator {
       rgbaData[i + 2] *= factor
     }
 
-    this.putManipulatedImageIntoContext()
+    this.#putManipulatedImageIntoContext()
   }
 
   applyOpacity(opacity) {
-    const rgbaData = this.getRgbaData()
+    const rgbaData = this.#getRgbaData
 
     const numberOfValuesInPixel = 4
     for (let i = 0; i < rgbaData.length; i += numberOfValuesInPixel) {
       rgbaData[i + 3] = opacity
     }
 
-    this.putManipulatedImageIntoContext()
+    this.#putManipulatedImageIntoContext()
   }
 
-  setRotationAngle(degrees) {
-    if (this.rotationAngle >= 360) {
-      this.rotationAngle = degrees
-    } else {
-      this.rotationAngle += degrees
-    }
+  #flipCanvasWidthAndHeight() {
+    this.#setCanvasWidth = this.#getImageHeight
+    this.#setCanvasHeight = this.#getImageWidth
   }
 
-  flipCanvasWidthAndHeight() {
-    this.canvas.width = this.image.height
-    this.canvas.height = this.image.width
-  }
-
-  updateCanvasDimensions(rotationInDegrees) {
+  #updateCanvasDimensions(rotationInDegrees) {
     if (
       Math.abs(rotationInDegrees) === 90 ||
       Math.abs(rotationInDegrees) === 270
     ) {
-      this.flipCanvasWidthAndHeight()
+      this.#flipCanvasWidthAndHeight()
     } else {
-      this.setOriginalCanvasDimensions()
+      this.#setOriginalCanvasDimensions()
     }
   }
 
-  clearCanvas() {
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
+  #clearCanvas() {
+    this.#getContext.clearRect(
+      0,
+      0,
+      this.#getCanvasWidth,
+      this.#getCanvasHeight
+    )
   }
 
   applyRotation(degrees) {
-    this.setRotationAngle(degrees)
-    this.updateCanvasDimensions(this.rotationAngle)
-    this.clearCanvas()
-
-    const rotationInRadians = (this.rotationAngle * Math.PI) / 180
-
-    this.context.save()
-    this.context.translate(this.canvas.width / 2, this.canvas.height / 2)
-    this.context.rotate(rotationInRadians)
-    this.context.drawImage(
-      this.image,
-      -this.xImageCenter,
-      -this.yImageCenter,
-      this.image.width,
-      this.image.height
+    this.#setRotationAngle = degrees
+    this.#updateCanvasDimensions(this.#getRotationAngle)
+    console.log(
+      '🚀 ~ file: ImageManipulator.js:233 ~ ImageManipulator ~ applyRotation ~ this.#getRotationAngle:',
+      this.#getRotationAngle
     )
-    this.context.restore()
+    this.#clearCanvas()
 
-    this.setImageData()
+    const rotationInRadians = (this.#getRotationAngle * Math.PI) / 180
+    console.log(
+      '🚀 ~ file: ImageManipulator.js:236 ~ ImageManipulator ~ applyRotation ~ rotationInRadians:',
+      rotationInRadians
+    )
+
+    this.#getContext.save()
+    this.#getContext.translate(
+      this.#getCanvasWidth / 2,
+      this.#getCanvasHeight / 2
+    )
+    this.#getContext.rotate(rotationInRadians)
+    this.#getContext.drawImage(
+      this.#getImage,
+      -this.#getXImageCenter,
+      -this.#getYImageCenter,
+      this.#getImageWidth,
+      this.#getImageHeight
+    )
+    this.#getContext.restore()
+
+    this.#setImageData = this.#getImageDataFromContext
   }
 
   tintSelectedColor(data, index, color, factor) {
@@ -176,14 +275,14 @@ class ImageManipulator {
   }
 
   changeTint(color, factor) {
-    const rgbaData = this.getRgbaData()
+    const rgbaData = this.#getRgbaData
 
     const numberOfValuesInPixel = 4
     for (let i = 0; i < rgbaData.length; i += numberOfValuesInPixel) {
       this.tintSelectedColor(rgbaData, i, color, factor)
     }
 
-    this.putManipulatedImageIntoContext()
+    this.#putManipulatedImageIntoContext()
   }
 }
 
