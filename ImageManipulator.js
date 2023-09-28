@@ -160,6 +160,31 @@ class ImageManipulator {
 
     this.setImageData()
   }
+
+  tintSelectedColor(data, index, color, factor) {
+    switch (color) {
+      case 'red':
+        data[index] *= factor
+        break
+      case 'green':
+        data[index + 1] *= factor
+        break
+      case 'blue':
+        data[index + 2] *= factor
+        break
+    }
+  }
+
+  changeTint(color, factor) {
+    const rgbaData = this.getRgbaData()
+
+    const numberOfValuesInPixel = 4
+    for (let i = 0; i < rgbaData.length; i += numberOfValuesInPixel) {
+      this.tintSelectedColor(rgbaData, i, color, factor)
+    }
+
+    this.putManipulatedImageIntoContext()
+  }
 }
 
 export default ImageManipulator

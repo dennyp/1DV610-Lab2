@@ -39,9 +39,17 @@ const rotateClockwiseButton = document.getElementById('btn-rotate-clockwise')
 rotateClockwiseButton.addEventListener('click', () => {
   imageManipulator.applyRotation(90)
 })
+
 const rotateCounterClockwiseButton = document.getElementById(
   'btn-rotate-counterclockwise'
 )
 rotateCounterClockwiseButton.addEventListener('click', () => {
   imageManipulator.applyRotation(-90)
+})
+
+const tintColorButton = document.getElementById('btn-tint-color')
+const selectOption = document.getElementById('select-color')
+tintColorButton.addEventListener('click', () => {
+  const selectedColor = selectOption.value
+  imageManipulator.changeTint(selectedColor, 1.1)
 })
