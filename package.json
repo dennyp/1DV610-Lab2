@@ -1,9 +1,9 @@
 {
-  "name": "1dv610-lab2",
+  "name": "imagemanipulator",
   "version": "1.0.0",
-  "description": "Module for image filters",
+  "description": "Module for image manipulation",
   "type": "module",
-  "main": "TestApp.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

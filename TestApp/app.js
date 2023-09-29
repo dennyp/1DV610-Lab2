@@ -1,4 +1,4 @@
-import ImageManipulator from './ImageManipulator.js'
+import ImageManipulator from '../ImageManipulator.js'
 
 const canvas = document.getElementById('canvas')
 const originalImageSrc = 'wepik-export-20230922142657alsS.jpeg'
